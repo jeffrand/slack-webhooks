@@ -11,7 +11,7 @@ req_path = os.path.join(os.path.dirname(path), 'requirements.txt')
 install_reqs = parse_requirements(req_path, session=uuid.uuid1())
 
 setup(name='slack_webhooks',
-      version='1.0.1',
+      version='1.0.2',
       description='Webhook helper for Slack',
       author='Jeff Rand',
       author_email='jeffreyrand@gmail.com',
