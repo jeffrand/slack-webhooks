@@ -3,11 +3,15 @@
 from setuptools import setup
 from pip.req import parse_requirements
 import uuid
+import os
 
-install_reqs = parse_requirements('./requirements.txt', session=uuid.uuid1())
+path = os.path.realpath(__file__)
+req_path = os.path.join(os.path.dirname(path), 'requirements.txt')
 
-setup(name='slack-webhooks',
-      version='1.0',
+install_reqs = parse_requirements(req_path, session=uuid.uuid1())
+
+setup(name='slack_webhooks',
+      version='1.0.1',
       description='Webhook helper for Slack',
       author='Jeff Rand',
       author_email='jeffreyrand@gmail.com',
