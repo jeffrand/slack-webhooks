@@ -6,7 +6,7 @@ import uuid
 
 install_reqs = parse_requirements('./requirements.txt', session=uuid.uuid1())
 
-setup(name='Slack Webhooks',
+setup(name='slack-webhooks',
       version='1.0',
       description='Webhook helper for Slack',
       author='Jeff Rand',
