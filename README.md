@@ -21,7 +21,7 @@ attachment = SlackAttachment('Party Time!', text='Party Time',
 webhook.send('Cool beans!', attachment=attachment)
 ```
 
-### Decorate a fuction with success and failure messages/attachments
+### Decorate a function
 
 ```
 a2 = SlackAttachment('Oh no!', text='Nooooo',

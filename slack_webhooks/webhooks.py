@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import requests
 import json
+from functools import wraps
 
 class SlackDumpableMixin(object):
     ''' Mixin for dumping properties '''
@@ -12,6 +13,7 @@ class SlackDumpableMixin(object):
                 if isinstance(prop_val, SlackDumpableMixin):
                     payload[prop] = prop_val.dump_props()
                 elif isinstance(prop_val, (list, tuple)):
+                    # this might be overkill
                     payload[prop] = []
                     for sub_prop in prop_val:
                         if isinstance(sub_prop, SlackDumpableMixin):
@@ -21,6 +23,7 @@ class SlackDumpableMixin(object):
         return payload
 
 class SlackWebhook(SlackDumpableMixin):
+    ''' Wrapper for Slack Incoming Webhooks '''
     def __init__(self, webhook_url, username=None, icon_url=None,
                  icon_emoji=None, channel=None):
         if icon_url and icon_emoji:
@@ -40,18 +43,35 @@ class SlackWebhook(SlackDumpableMixin):
         payload.update(extra)
         return json.dumps(payload)
 
-    def dispatch(self, text, attach=None):
+    def decorate(self, success_text, failure_text,
+                 success_attachment=None, failure_attachment=None):
+        ''' Decorator with success/failure text and attachments '''
+        def inner_decorator(func):
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                try:
+                    ret = func(*args, **kwargs)
+                    self.send(success_text, attachment=success_attachment)
+                    return ret
+                except Exception:
+                    self.send(failure_text, attachment=failure_attachment)
+                    raise
+            return wrapper
+        return inner_decorator
+
+    def send(self, text, attachment=None):
         extra = {'text': text}
-        if attach:
-            if isinstance(attach, SlackAttachment):
-                attach = [attach.dump_props()]
+        if attachment:
+            if isinstance(attachment, SlackAttachment):
+                attachment = [attachment.dump_props()]
             else:
-                attach = [a.dump_props() for a in attach
+                attachment = [a.dump_props() for a in attachment
                           if isinstance(a, SlackAttachment)]
-            extra['attachments'] = attach
+            extra['attachments'] = attachment
         return requests.post(self.webhook_url, data=self.__dump_payload(extra))
 
 class SlackAttachment(SlackDumpableMixin):
+    ''' Wrapper for Slack Attachments '''
     def __init__(self, fallback, color=None, pretext=None, author_name=None,
                  author_link=None, author_icon=None, title=None, title_link=None,
                  text=None, fields=None, image_url=None, thumb_url=None):

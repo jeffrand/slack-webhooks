@@ -3,8 +3,8 @@
 from setuptools import setup
 
 setup(name='slack_webhooks',
-      version='1.0.3',
-      description='Webhook helper for Slack',
+      version='1.0.4',
+      description='Incoming Webhook helper for Slack',
       author='Jeff Rand',
       author_email='jeffreyrand@gmail.com',
       install_requires=[
