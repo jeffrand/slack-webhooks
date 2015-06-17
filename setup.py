@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='slack_webhooks',
-      version='1.0.5',
+      version='1.0.6',
       description='Incoming Webhook helper for Slack',
       author='Jeff Rand',
       author_email='jeffreyrand@gmail.com',

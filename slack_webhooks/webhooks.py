@@ -3,8 +3,6 @@ import requests
 import json
 from functools import wraps
 
-alert_once_global = None
-
 class SlackDumpableMixin(object):
     ''' Mixin for dumping properties '''
     def dump_props(self):
@@ -47,34 +45,23 @@ class SlackWebhook(SlackDumpableMixin):
 
     def decorate(self, pre_text, failure_text,
                  pre_attachment=None, success_text=None,
-                 success_attachment=None, failure_attachment=None,
-                 alert_once=False):
+                 success_attachment=None, failure_attachment=None):
         ''' Decorator with success/failure text and attachments
             Text for before the function is excuted and if it fails
             is required
-
-            alter_once is useful for things like decorating Fabric
-            commands that only need a signal altering per run
         '''
         def inner_decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
-                alert = True
-                global alert_once_global
-                if alert_once and alert_once_global:
-                    alert = False
                 try:
-                    if alert:
-                        self.send(pre_text, attachment=pre_attachment)
+                    self.send(pre_text, attachment=pre_attachment)
                     ret = func(*args, **kwargs)
                 except Exception:
                     self.send(failure_text, attachment=failure_attachment)
                     raise
                 else:
-                    if success_text and alert:
+                    if success_text:
                         self.send(success_text, attachment=success_attachment)
-                    if alert_once:
-                        alert_once_global = True
                     return ret
             return wrapper
         return inner_decorator
