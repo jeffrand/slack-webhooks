@@ -8,7 +8,7 @@ setup(name='slack_webhooks',
       author='Jeff Rand',
       author_email='jeffreyrand@gmail.com',
       install_requires=[
-        'requests==2.7.0',
+        'requests==2.20.0',
       ],
       url='https://github.com/jeffrand/slack-webhooks',
       packages=['slack_webhooks'],
